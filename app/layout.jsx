@@ -8,7 +8,7 @@ import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 export const metadata = {
-  title: 'PropertyRental',
+  title: 'CloudJSArc-Rental',
   description: 'Find The Perfect Rental Property',
   keywords: 'rental, property, real estate',
 };
