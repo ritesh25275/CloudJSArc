@@ -1,24 +1,20 @@
-import mongoose from 'mongoose';
-
-let connected = false;
+const mongoose = require('mongoose');
 
 const connectDB = async () => {
-  mongoose.set('strictQuery', true);
-
-  // If the database is already connected, don't connect again
-  if (connected) {
+  if (mongoose.connection.readyState) {
     console.log('MongoDB is already connected...');
     return;
   }
 
-  // Connect to MongoDB
   try {
-    await mongoose.connect(process.env.MONGODB_URI);
-    connected = true;
+    await mongoose.connect(process.env.MONGODB_URI, {
+      serverSelectionTimeoutMS: 20000, // Set server selection timeout to 20 seconds
+    });
     console.log('MongoDB connected...');
   } catch (error) {
-    console.log(error);
+    console.error('Error connecting to MongoDB:', error.message);
+    throw new Error('Failed to connect to MongoDB.');
   }
 };
 
-export default connectDB;
+module.exports = connectDB;

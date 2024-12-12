@@ -5,12 +5,25 @@ import connectDB from '@/config/database';
 import Property from '@/models/Property';
 
 const PropertiesPage = async ({ searchParams: { pageSize = 9, page = 1 } }) => {
-  await connectDB();
-  const skip = (page - 1) * pageSize;
+  let properties = [];
+  let total = 0;
 
-  const total = await Property.countDocuments({});
-  const properties = await Property.find({}).skip(skip).limit(pageSize);
+  try {
+    // Establish MongoDB connection
+    await connectDB();
 
+    // Calculate the number of items to skip
+    const skip = (page - 1) * pageSize;
+
+    // Fetch total count and properties
+    total = await Property.countDocuments({});
+    properties = await Property.find({})
+      .skip(skip)
+      .limit(pageSize);
+
+  } catch (error) {
+    console.error('Error fetching properties:', error.message);
+  }
   // Calculate if pagination is needed
   const showPagination = total > pageSize;
 

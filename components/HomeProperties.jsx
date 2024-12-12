@@ -4,13 +4,24 @@ import Link from 'next/link';
 import PropertyCard from './PropertyCard';
 
 const HomeProperties = async () => {
-  await connectDB();
+  // await connectDB();
 
-  // Get the 3 latest properties
-  const recentProperties = await Property.find({})
-    .sort({ createdAt: -1 })
-    .limit(3)
-    .lean();
+  let recentProperties = [];
+  try {
+    // Connect to the database
+    await connectDB();
+
+    // Get the 3 latest properties
+    recentProperties = await Property.find({})
+      .sort({ createdAt: -1 })
+      .limit(3)
+      .lean();
+
+  } catch (error) {
+    // Log any errors that occur
+    console.error('Error fetching properties:', error.message);
+  }
+
 
   return (
     <>

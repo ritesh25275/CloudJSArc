@@ -9,7 +9,7 @@ import { FaArrowAltCircleLeft } from 'react-icons/fa';
 const SearchResultsPage = async ({
   searchParams: { location, propertyType },
 }) => {
-  await connectDB();
+  // await connectDB();
 
   const locationPattern = new RegExp(location, 'i');
 
@@ -31,8 +31,19 @@ const SearchResultsPage = async ({
     query.type = typePattern;
   }
 
-  const propertiesQueryResults = await Property.find(query).lean();
-  const properties = propertiesQueryResults.map(convertToSerializeableObject);
+
+  let properties = [];
+
+  try {
+    // Connect to the database
+    await connectDB();
+
+    const propertiesQueryResults = await Property.find(query).lean();
+    properties = propertiesQueryResults.map(convertToSerializeableObject);
+  } catch (error) {
+    // Log any errors that occur
+    console.error('Error fetching properties:', error.message);
+  }
 
   return (
     <>

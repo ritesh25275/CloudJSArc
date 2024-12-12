@@ -3,11 +3,21 @@ import connectDB from '@/config/database';
 import Property from '@/models/Property';
 
 const FeaturedProperties = async () => {
-  await connectDB();
+  // await connectDB();
+  let properties = [];
+  try {
+    // Connect to the database
+    await connectDB();
 
-  const properties = await Property.find({
-    is_featured: true,
-  }).lean();
+    properties = await Property.find({
+      is_featured: true,
+    }).lean();
+  } catch (error) {
+    // Log any errors that occur
+    console.error('Error fetching properties:', error.message);
+  }
+
+  
 
   return properties.length > 0 ? (
     <section className='bg-blue-50 px-4 pt-6 pb-10'>

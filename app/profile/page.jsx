@@ -7,7 +7,7 @@ import { getSessionUser } from '@/utils/getSessionUser';
 import Image from 'next/image';
 
 const ProfilePage = async () => {
-  await connectDB();
+  // await connectDB();
 
   const sessionUser = await getSessionUser();
 
@@ -16,9 +16,22 @@ const ProfilePage = async () => {
   if (!userId) {
     throw new Error('User ID is required');
   }
+  let properties = [];
 
-  const propertiesDocs = await Property.find({ owner: userId }).lean();
-  const properties = propertiesDocs.map(convertToSerializeableObject);
+  try {
+    // Connect to the database
+    await connectDB();
+  
+    // Fetch properties owned by the user
+    const propertiesDocs = await Property.find({ owner: userId }).lean();
+  
+    // Convert documents to serializable objects
+    properties = propertiesDocs.map(convertToSerializeableObject);
+  } catch (error) {
+    // Log any errors that occur
+    console.error('Error fetching properties:', error.message);
+  }
+  
 
   return (
     <section className='bg-blue-50'>

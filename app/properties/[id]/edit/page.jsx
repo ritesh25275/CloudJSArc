@@ -4,10 +4,18 @@ import Property from '@/models/Property';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 
 const PropertyEditPage = async ({ params }) => {
-  await connectDB();
+  let property = [];
 
-  const propertyDoc = await Property.findById(params.id).lean();
-  const property = convertToSerializeableObject(propertyDoc);
+  try {
+    // Connect to the database
+    await connectDB();
+
+    const propertyDoc = await Property.findById(params.id).lean();
+    property = convertToSerializeableObject(propertyDoc);
+  } catch (error) {
+    // Log any errors that occur
+    console.error('Error fetching properties:', error.message);
+  }
 
   if (!property) {
     return (

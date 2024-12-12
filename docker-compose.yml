@@ -1,0 +1,24 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nextjs-app
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - MONGODB_URI=mongodb://mongodb:27017/capstone
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo-data:/data/db
+
+volumes:
+  mongo-data:

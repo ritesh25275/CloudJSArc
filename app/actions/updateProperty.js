@@ -7,15 +7,24 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 
 async function updateProperty(propertyId, formData) {
-  await connectDB();
+  
 
   const sessionUser = await getSessionUser();
 
   const { userId } = sessionUser;
+  let existingProperty = null;
+  let property = null;
+  try {
+    // Connect to the database
+    await connectDB();
 
-  const existingProperty = await Property.findById(propertyId);
+    // Fetch the property document by ID
+    const existingProperty = await Property.findById(propertyId);
 
-  // Verify ownership
+    // Convert to a serializable object
+    property = convertToSerializableObject(propertyDoc);
+
+    // Verify ownership
   if (existingProperty.owner.toString() !== userId) {
     throw new Error('Current user does not own this property.');
   }
@@ -52,6 +61,11 @@ async function updateProperty(propertyId, formData) {
   revalidatePath('/', 'layout');
 
   redirect(`/properties/${updatedProperty._id}`);
+  } catch (error) {
+    console.error('Error fetching property:', error.message);
+  }
+  revalidatePath('/', 'layout')
+  
 }
 
 export default updateProperty;

@@ -15,33 +15,44 @@ async function deleteProperty(propertyId) {
 	}
 
 	const { userId } = sessionUser;
+	let property = null;
+	try {
+		// Connect to the database
+		await connectDB();
 
-	await connectDB();
+		// Fetch the property document by ID
+		const propertyDoc = await Property.findById(propertyId).lean();
 
-	const property = await Property.findById(propertyId);
+		// Convert to a serializable object
+		property = convertToSerializableObject(propertyDoc);
 
-	if (!property) throw new Error("Property Not Found");
+		if (!property) throw new Error("Property Not Found");
 
-	// Verify ownership
-	if (property.owner.toString() !== userId) {
-		throw new Error("Unauthorized");
-	}
-
-	// extract public id's from image url in DB
-	const publicIds = property.images.map((imageUrl) => {
-		const parts = imageUrl.split("/");
-		return parts.at(-1).split(".").at(0);
-	});
-
-	// Delete images from Cloudinary
-	if (publicIds.length > 0) {
-		for (let publicId of publicIds) {
-			await cloudinary.uploader.destroy("CloudJSArc-Rental/" + publicId);
+		// Verify ownership
+		if (property.owner.toString() !== userId) {
+			throw new Error("Unauthorized");
 		}
+
+		// extract public id's from image url in DB
+		const publicIds = property.images.map((imageUrl) => {
+			const parts = imageUrl.split("/");
+			return parts.at(-1).split(".").at(0);
+		});
+
+		// Delete images from Cloudinary
+		if (publicIds.length > 0) {
+			for (let publicId of publicIds) {
+				await cloudinary.uploader.destroy("CloudJSArc-Rental/" + publicId);
+			}
+		}
+
+		// Proceed with property deletion
+		await property.deleteOne();
+	} catch (error) {
+		console.error('Error fetching property:', error.message);
 	}
 
-	// Proceed with property deletion
-	await property.deleteOne();
+
 
 	revalidatePath("/", "layout");
 }

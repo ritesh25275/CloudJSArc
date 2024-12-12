@@ -11,9 +11,22 @@ import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 
 const PropertyPage = async ({ params }) => {
-  await connectDB();
-  const propertyDoc = await Property.findById(params.id).lean();
-  const property = convertToSerializeableObject(propertyDoc);
+  // await connectDB();
+  let property = [];
+
+  try {
+    // Connect to the database
+    await connectDB();
+
+    const propertyDoc = await Property.findById(params.id).lean();
+    property = convertToSerializeableObject(propertyDoc);
+  } catch (error) {
+    // Log any errors that occur
+    console.error('Error fetching properties:', error.message);
+  }
+
+
+
 
   if (!property) {
     return (
