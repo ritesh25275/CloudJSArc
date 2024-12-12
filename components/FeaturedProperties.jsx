@@ -1,5 +1,5 @@
 import FeaturedPropertyCard from '@/components/FeaturedPropertyCard';
-import connectDB from '@/config/database';
+import connectDB from '@/backend/config/database';
 import Property from '@/models/Property';
 
 const FeaturedProperties = async () => {
@@ -17,7 +17,7 @@ const FeaturedProperties = async () => {
     console.error('Error fetching properties:', error.message);
   }
 
-  
+
 
   return properties.length > 0 ? (
     <section className='bg-blue-50 px-4 pt-6 pb-10'>

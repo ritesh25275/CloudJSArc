@@ -1,7 +1,7 @@
 'use client';
 
-import deleteMessage from '@/app/actions/deleteMessage';
-import markMessageAsRead from '@/app/actions/markMessageAsRead';
+import deleteMessage from '@/backend/actions/deleteMessage';
+import markMessageAsRead from '@/backend/actions/markMessageAsRead';
 import { useGlobalContext } from '@/context/GlobalContext';
 import { useState } from 'react';
 import { toast } from 'react-toastify';

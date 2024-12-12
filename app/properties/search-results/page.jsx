@@ -1,6 +1,6 @@
 import PropertyCard from '@/components/PropertyCard';
 import PropertySearchForm from '@/components/PropertySearchForm';
-import connectDB from '@/config/database';
+import connectDB from '@/backend/config/database';
 import Property from '@/models/Property';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import Link from 'next/link';

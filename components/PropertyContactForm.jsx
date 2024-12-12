@@ -1,6 +1,6 @@
 'use client';
 
-import addMessage from '@/app/actions/addMessage';
+import addMessage from '@/backend/actions/addMessage';
 import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
 import { useFormState } from 'react-dom';

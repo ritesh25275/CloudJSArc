@@ -1,7 +1,7 @@
 import Pagination from '@/components/Pagination';
 import PropertyCard from '@/components/PropertyCard';
 import PropertySearchForm from '@/components/PropertySearchForm';
-import connectDB from '@/config/database';
+import connectDB from '@/backend/config/database';
 import Property from '@/models/Property';
 
 const PropertiesPage = async ({ searchParams: { pageSize = 9, page = 1 } }) => {

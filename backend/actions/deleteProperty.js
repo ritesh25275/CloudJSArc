@@ -1,7 +1,7 @@
 "use server";
 
-import cloudinary from "@/config/cloudinary";
-import connectDB from "@/config/database";
+import cloudinary from "@/backend/config/cloudinary";
+import connectDB from "@/backend/config/database";
 import Property from "@/models/Property";
 import { getSessionUser } from "@/utils/getSessionUser";
 import { revalidatePath } from "next/cache";
@@ -42,17 +42,17 @@ async function deleteProperty(propertyId) {
 		// Delete images from Cloudinary
 		if (publicIds.length > 0) {
 			for (let publicId of publicIds) {
-				await cloudinary.uploader.destroy("CloudJSArc-Rental/" + publicId);
+				await cloudinary.uploader.destroy(
+					"CloudJSArc-Rental/" + publicId
+				);
 			}
 		}
 
 		// Proceed with property deletion
 		await property.deleteOne();
 	} catch (error) {
-		console.error('Error fetching property:', error.message);
+		console.error("Error fetching property:", error.message);
 	}
-
-
 
 	revalidatePath("/", "layout");
 }

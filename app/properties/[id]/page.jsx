@@ -4,7 +4,7 @@ import PropertyDetails from '@/components/PropertyDetails';
 import PropertyHeaderImage from '@/components/PropertyHeaderImage';
 import PropertyImages from '@/components/PropertyImages';
 import ShareButtons from '@/components/ShareButtons';
-import connectDB from '@/config/database';
+import connectDB from '@/backend/config/database';
 import Property from '@/models/Property';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import Link from 'next/link';

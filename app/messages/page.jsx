@@ -1,5 +1,5 @@
 import MessageCard from '@/components/MessageCard';
-import connectDB from '@/config/database';
+import connectDB from '@/backend/config/database';
 import Message from '@/models/Message';
 import '@/models/Property';
 import { convertToSerializeableObject } from '@/utils/convertToObject';

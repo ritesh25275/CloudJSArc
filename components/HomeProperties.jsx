@@ -1,4 +1,4 @@
-import connectDB from '@/config/database';
+import connectDB from '@/backend/config/database';
 import Property from '@/models/Property';
 import Link from 'next/link';
 import PropertyCard from './PropertyCard';

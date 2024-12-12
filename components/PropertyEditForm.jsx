@@ -1,4 +1,4 @@
-import updateProperty from '@/app/actions/updateProperty';
+import updateProperty from '@/backend/actions/updateProperty';
 
 const PropertyEditForm = ({ property }) => {
   const updatePropertyById = updateProperty.bind(null, property._id);

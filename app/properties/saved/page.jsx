@@ -1,5 +1,5 @@
 import PropertyCard from '@/components/PropertyCard';
-import connectDB from '@/config/database';
+import connectDB from '@/backend/config/database';
 import User from '@/models/User';
 import { getSessionUser } from '@/utils/getSessionUser';
 

@@ -1,6 +1,6 @@
 import profileDefault from '@/assets/images/profile.png';
 import ProfileProperties from '@/components/ProfileProperties';
-import connectDB from '@/config/database';
+import connectDB from '@/backend/config/database';
 import Property from '@/models/Property';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 import { getSessionUser } from '@/utils/getSessionUser';
@@ -21,17 +21,17 @@ const ProfilePage = async () => {
   try {
     // Connect to the database
     await connectDB();
-  
+
     // Fetch properties owned by the user
     const propertiesDocs = await Property.find({ owner: userId }).lean();
-  
+
     // Convert documents to serializable objects
     properties = propertiesDocs.map(convertToSerializeableObject);
   } catch (error) {
     // Log any errors that occur
     console.error('Error fetching properties:', error.message);
   }
-  
+
 
   return (
     <section className='bg-blue-50'>

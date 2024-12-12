@@ -1,5 +1,5 @@
 import PropertyEditForm from '@/components/PropertyEditForm';
-import connectDB from '@/config/database';
+import connectDB from '@/backend/config/database';
 import Property from '@/models/Property';
 import { convertToSerializeableObject } from '@/utils/convertToObject';
 
