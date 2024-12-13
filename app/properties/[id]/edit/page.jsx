@@ -1,20 +1,26 @@
 import PropertyEditForm from '@/components/PropertyEditForm';
-import connectDB from '@/backend/config/database';
-import Property from '@/models/Property';
-import { convertToSerializeableObject } from '@/utils/convertToObject';
+
+const fetchPropertyById = async (id) => {
+  const response = await fetch(`${process.env.BACKEND_URL}/api/properties/${id}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch property');
+  }
+
+  const data = await response.json();
+  return data.property;
+};
 
 const PropertyEditPage = async ({ params }) => {
-  let property = [];
+  let property = null;
 
   try {
-    // Connect to the database
-    await connectDB();
-
-    const propertyDoc = await Property.findById(params.id).lean();
-    property = convertToSerializeableObject(propertyDoc);
+    property = await fetchPropertyById(params.id);
   } catch (error) {
-    // Log any errors that occur
-    console.error('Error fetching properties:', error.message);
+    console.error('Error fetching property:', error.message);
   }
 
   if (!property) {

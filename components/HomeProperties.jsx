@@ -1,27 +1,34 @@
-import connectDB from '@/backend/config/database';
-import Property from '@/models/Property';
+"use client";
+import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import PropertyCard from './PropertyCard';
 
-const HomeProperties = async () => {
-  // await connectDB();
+const HomeProperties = () => {
+  const [recentProperties, setRecentProperties] = useState([]);
+  const [error, setError] = useState(null);
 
-  let recentProperties = [];
-  try {
-    // Connect to the database
-    await connectDB();
+  useEffect(() => {
+    const fetchRecentProperties = async () => {
+      const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL;
+      const apiUrl = `${backendUrl}/api/properties/recent`;
 
-    // Get the 3 latest properties
-    recentProperties = await Property.find({})
-      .sort({ createdAt: -1 })
-      .limit(3)
-      .lean();
+      console.log('Fetching from:', apiUrl);
 
-  } catch (error) {
-    // Log any errors that occur
-    console.error('Error fetching properties:', error.message);
-  }
+      try {
+        const response = await fetch(apiUrl);
+        if (!response.ok) {
+          throw new Error('Failed to fetch recent properties');
+        }
+        const data = await response.json();
+        setRecentProperties(data.properties || []);
+      } catch (err) {
+        console.error('Error fetching properties:', err.message);
+        setError(err.message);
+      }
+    };
 
+    fetchRecentProperties();
+  }, []);
 
   return (
     <>

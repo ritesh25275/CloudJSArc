@@ -4,29 +4,31 @@ import PropertyDetails from '@/components/PropertyDetails';
 import PropertyHeaderImage from '@/components/PropertyHeaderImage';
 import PropertyImages from '@/components/PropertyImages';
 import ShareButtons from '@/components/ShareButtons';
-import connectDB from '@/backend/config/database';
-import Property from '@/models/Property';
-import { convertToSerializeableObject } from '@/utils/convertToObject';
 import Link from 'next/link';
 import { FaArrowLeft } from 'react-icons/fa';
 
-const PropertyPage = async ({ params }) => {
-  // await connectDB();
-  let property = [];
+const fetchPropertyById = async (id) => {
+  const response = await fetch(`${process.env.BACKEND_URL}/api/properties/${id}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
 
-  try {
-    // Connect to the database
-    await connectDB();
-
-    const propertyDoc = await Property.findById(params.id).lean();
-    property = convertToSerializeableObject(propertyDoc);
-  } catch (error) {
-    // Log any errors that occur
-    console.error('Error fetching properties:', error.message);
+  if (!response.ok) {
+    throw new Error('Failed to fetch property');
   }
 
+  const data = await response.json();
+  return data.property;
+};
 
+const PropertyPage = async ({ params }) => {
+  let property = null;
 
+  try {
+    property = await fetchPropertyById(params.id);
+  } catch (error) {
+    console.error('Error fetching property:', error.message);
+  }
 
   if (!property) {
     return (
@@ -54,7 +56,7 @@ const PropertyPage = async ({ params }) => {
           <div className='grid grid-cols-1 md:grid-cols-70/30 w-full gap-6'>
             <PropertyDetails property={property} />
 
-            {/* <!-- Sidebar --> */}
+            {/* Sidebar */}
             <aside className='space-y-4'>
               <BookmarkButton property={property} />
               <ShareButtons property={property} />

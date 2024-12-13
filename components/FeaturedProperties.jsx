@@ -1,6 +1,6 @@
 import FeaturedPropertyCard from '@/components/FeaturedPropertyCard';
 import connectDB from '@/backend/config/database';
-import Property from '@/models/Property';
+import Property from '@/backend/models/Property';
 
 const FeaturedProperties = async () => {
   // await connectDB();

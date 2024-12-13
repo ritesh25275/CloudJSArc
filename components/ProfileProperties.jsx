@@ -1,6 +1,6 @@
 'use client';
 
-import deleteProperty from '@/backend/actions/deleteProperty';
+import deleteProperty from '@/app/actions/deleteProperty';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';

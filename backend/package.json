@@ -1,12 +1,22 @@
 {
+  "scripts": {
+    "dev": "nodemon server.js",
+    "start": "node server.js"
+  },
+  "type": "module",
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.709.0",
     "body-parser": "^1.20.3",
     "CloudJSArc": "file:..",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
     "express": "^4.21.2",
     "install": "^0.13.0",
+    "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.8.4",
-    "npm": "^10.9.2"
+    "next-auth": "^4.24.11",
+    "npm": "^10.9.2",
+    "passport": "^0.7.0",
+    "passport-google-oauth20": "^2.0.0"
   }
 }

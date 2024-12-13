@@ -1,40 +1,25 @@
 import MessageCard from '@/components/MessageCard';
-import connectDB from '@/backend/config/database';
-import Message from '@/models/Message';
-import '@/models/Property';
-import { convertToSerializeableObject } from '@/utils/convertToObject';
-import { getSessionUser } from '@/utils/getSessionUser';
+
+const fetchMessages = async () => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/messages`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch messages');
+  }
+  const data = await response.json();
+  return data.messages;
+};
 
 const MessagePage = async () => {
-  await connectDB();
+  let messages = [];
 
-  const sessionUser = await getSessionUser();
-
-  const { userId } = sessionUser;
-  console.log(userId);
-
-  const readMessages = await Message.find({ recipient: userId, read: true })
-    .sort({ createdAt: -1 }) // Sort read messages in asc order
-    .populate('sender', 'username')
-    .populate('property', 'name')
-    .lean();
-
-  const unreadMessages = await Message.find({
-    recipient: userId,
-    read: false,
-  })
-    .sort({ createdAt: -1 }) // Sort read messages in asc order
-    .populate('sender', 'username')
-    .populate('property', 'name')
-    .lean();
-
-  // Convert to serializable object so we can pass to client component.
-  const messages = [...unreadMessages, ...readMessages].map((messageDoc) => {
-    const message = convertToSerializeableObject(messageDoc);
-    message.sender = convertToSerializeableObject(messageDoc.sender);
-    message.property = convertToSerializeableObject(messageDoc.property);
-    return message;
-  });
+  try {
+    messages = await fetchMessages();
+  } catch (error) {
+    console.error('Error fetching messages:', error.message);
+  }
 
   return (
     <section className='bg-blue-50'>

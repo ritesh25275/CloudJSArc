@@ -1,25 +1,24 @@
 import PropertyCard from '@/components/PropertyCard';
-import connectDB from '@/backend/config/database';
-import User from '@/models/User';
-import { getSessionUser } from '@/utils/getSessionUser';
+
+const fetchSavedProperties = async () => {
+  const response = await fetch(`${process.env.BACKEND_URL}/api/properties/saved`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch saved properties');
+  }
+
+  const data = await response.json();
+  return data.bookmarks;
+};
 
 const SavedPropertiesPage = async () => {
   let bookmarks = [];
 
   try {
-    // Connect to the database
-    await connectDB();
-
-    // Get the current session user
-    const sessionUser = await getSessionUser();
-    const { userId } = sessionUser;
-
-    // Fetch bookmarks for the user
-    const user = await User.findById(userId)
-      .populate('bookmarks') // Populate bookmarks field
-      .lean();
-
-    bookmarks = user?.bookmarks || [];
+    bookmarks = await fetchSavedProperties();
   } catch (error) {
     console.error('Error fetching saved properties:', error.message);
   }

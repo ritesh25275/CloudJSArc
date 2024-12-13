@@ -1,37 +1,30 @@
 import profileDefault from '@/assets/images/profile.png';
 import ProfileProperties from '@/components/ProfileProperties';
-import connectDB from '@/backend/config/database';
-import Property from '@/models/Property';
-import { convertToSerializeableObject } from '@/utils/convertToObject';
-import { getSessionUser } from '@/utils/getSessionUser';
 import Image from 'next/image';
 
-const ProfilePage = async () => {
-  // await connectDB();
-
-  const sessionUser = await getSessionUser();
-
-  const { userId } = sessionUser;
-
-  if (!userId) {
-    throw new Error('User ID is required');
+const fetchProfileData = async () => {
+  const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/profile`, {
+    method: 'GET',
+    credentials: 'include',
+  });
+  if (!response.ok) {
+    throw new Error('Failed to fetch profile data');
   }
+  const data = await response.json();
+  return data;
+};
+
+const ProfilePage = async () => {
+  let sessionUser = {};
   let properties = [];
 
   try {
-    // Connect to the database
-    await connectDB();
-
-    // Fetch properties owned by the user
-    const propertiesDocs = await Property.find({ owner: userId }).lean();
-
-    // Convert documents to serializable objects
-    properties = propertiesDocs.map(convertToSerializeableObject);
+    const profileData = await fetchProfileData();
+    sessionUser = profileData.user;
+    properties = profileData.properties;
   } catch (error) {
-    // Log any errors that occur
-    console.error('Error fetching properties:', error.message);
+    console.error('Error fetching profile data:', error.message);
   }
-
 
   return (
     <section className='bg-blue-50'>
@@ -43,7 +36,7 @@ const ProfilePage = async () => {
               <div className='mb-4'>
                 <Image
                   className='h-32 w-32 md:h-48 md:w-48 rounded-full mx-auto md:mx-0'
-                  src={sessionUser.user.image || profileDefault}
+                  src={sessionUser.image || profileDefault}
                   width={200}
                   height={200}
                   alt='User'
@@ -52,11 +45,11 @@ const ProfilePage = async () => {
 
               <h2 className='text-2xl mb-4'>
                 <span className='font-bold block'>Name: </span>{' '}
-                {sessionUser.user.name}
+                {sessionUser.name}
               </h2>
               <h2 className='text-2xl'>
                 <span className='font-bold block'>Email: </span>{' '}
-                {sessionUser.user.email}
+                {sessionUser.email}
               </h2>
             </div>
 

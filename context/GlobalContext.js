@@ -1,6 +1,6 @@
 "use client";
 
-import getUnreadMessageCount from "@/backend/actions/getUnreadMessageCount";
+import getUnreadMessageCount from "@/app/actions/getUnreadMessageCount";
 import { useSession } from "next-auth/react";
 import { createContext, useContext, useEffect, useState } from "react";
 

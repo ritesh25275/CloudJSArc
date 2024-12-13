@@ -1,47 +1,33 @@
 import PropertyCard from '@/components/PropertyCard';
 import PropertySearchForm from '@/components/PropertySearchForm';
-import connectDB from '@/backend/config/database';
-import Property from '@/models/Property';
-import { convertToSerializeableObject } from '@/utils/convertToObject';
 import Link from 'next/link';
 import { FaArrowAltCircleLeft } from 'react-icons/fa';
 
-const SearchResultsPage = async ({
-  searchParams: { location, propertyType },
-}) => {
-  // await connectDB();
+const fetchSearchResults = async (location, propertyType) => {
+  const query = new URLSearchParams();
 
-  const locationPattern = new RegExp(location, 'i');
+  if (location) query.append('location', location);
+  if (propertyType && propertyType !== 'All') query.append('propertyType', propertyType);
 
-  // Match location pattern against database fields
-  let query = {
-    $or: [
-      { name: locationPattern },
-      { description: locationPattern },
-      { 'location.street': locationPattern },
-      { 'location.city': locationPattern },
-      { 'location.state': locationPattern },
-      { 'location.zipcode': locationPattern },
-    ],
-  };
+  const response = await fetch(`${process.env.BACKEND_URL}/api/properties/search?${query.toString()}`, {
+    method: 'GET',
+    credentials: 'include',
+  });
 
-  // Only check for property if its not 'All'
-  if (propertyType && propertyType !== 'All') {
-    const typePattern = new RegExp(propertyType, 'i');
-    query.type = typePattern;
+  if (!response.ok) {
+    throw new Error('Failed to fetch search results');
   }
 
+  const data = await response.json();
+  return data.properties;
+};
 
+const SearchResultsPage = async ({ searchParams: { location, propertyType } }) => {
   let properties = [];
 
   try {
-    // Connect to the database
-    await connectDB();
-
-    const propertiesQueryResults = await Property.find(query).lean();
-    properties = propertiesQueryResults.map(convertToSerializeableObject);
+    properties = await fetchSearchResults(location, propertyType);
   } catch (error) {
-    // Log any errors that occur
     console.error('Error fetching properties:', error.message);
   }
 

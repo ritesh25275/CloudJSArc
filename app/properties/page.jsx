@@ -1,30 +1,39 @@
 import Pagination from '@/components/Pagination';
 import PropertyCard from '@/components/PropertyCard';
 import PropertySearchForm from '@/components/PropertySearchForm';
-import connectDB from '@/backend/config/database';
-import Property from '@/models/Property';
+
+const fetchProperties = async (page, pageSize) => {
+  const response = await fetch(
+    `${process.env.BACKEND_URL}/api/properties?page=${page}&pageSize=${pageSize}`,
+    {
+      method: 'GET',
+      credentials: 'include',
+    }
+  );
+
+  console.log('Response:', response);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch properties');
+  }
+
+  const data = await response.json();
+  return data;
+};
 
 const PropertiesPage = async ({ searchParams: { pageSize = 9, page = 1 } }) => {
   let properties = [];
   let total = 0;
 
   try {
-    // Establish MongoDB connection
-    await connectDB();
-
-    // Calculate the number of items to skip
-    const skip = (page - 1) * pageSize;
-
-    // Fetch total count and properties
-    total = await Property.countDocuments({});
-    properties = await Property.find({})
-      .skip(skip)
-      .limit(pageSize);
-
+    const result = await fetchProperties(page, pageSize);
+    console.log('Result:', result);
+    properties = result.properties;
+    total = result.total;
   } catch (error) {
     console.error('Error fetching properties:', error.message);
   }
-  // Calculate if pagination is needed
+
   const showPagination = total > pageSize;
 
   return (

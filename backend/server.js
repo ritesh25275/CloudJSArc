@@ -1,8 +1,10 @@
-const express = require("express");
-const bodyParser = require("body-parser");
-const cors = require("cors");
-const dotenv = require("dotenv");
-const mongoose = require("mongoose");
+import express from "express";
+import bodyParser from "body-parser";
+import cors from "cors";
+import dotenv from "dotenv";
+import mongoose from "mongoose";
+import messageRoutes from "./routes/messageRoutes.js";
+import propertyRoutes from "./routes/propertyRoutes.js";
 
 // Load environment variables
 dotenv.config();
@@ -12,7 +14,15 @@ const app = express();
 
 // Middleware
 app.use(bodyParser.json());
-app.use(cors());
+
+// Allow requests from the frontend
+const corsOptions = {
+	origin: process.env.CORS_ORIGIN || "http://localhost:3000",
+	methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
+	credentials: true,
+};
+
+app.use(cors(corsOptions));
 
 // Connect to Database with Error Handling
 (async () => {
@@ -29,31 +39,8 @@ app.use(cors());
 })();
 
 // Routes
-const messageRoutes = require("./routes/messageRoutes");
-const propertyRoutes = require("./routes/propertyRoutes");
-
-// Use Routes
-app.use("/api/messages", async (req, res, next) => {
-	try {
-		await messageRoutes(req, res, next);
-	} catch (error) {
-		console.error("Error in /api/messages route:", error.message);
-		res.status(500).send({
-			error: "An error occurred while processing messages",
-		});
-	}
-});
-
-app.use("/api/properties", async (req, res, next) => {
-	try {
-		await propertyRoutes(req, res, next);
-	} catch (error) {
-		console.error("Error in /api/properties route:", error.message);
-		res.status(500).send({
-			error: "An error occurred while processing properties",
-		});
-	}
-});
+app.use("/api/messages", messageRoutes); // Add the message routes
+app.use("/api/properties", propertyRoutes);
 
 // Default Route
 app.get("/", (req, res) => {
