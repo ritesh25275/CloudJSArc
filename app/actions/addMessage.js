@@ -1,7 +1,7 @@
 "use server";
 
 import axios from "axios";
-import { getSessionUser } from "@/utils/getServerSession";
+// import { getSessionUser } from "@/utils/getServerSession";
 
 async function addMessage(previousState, formData) {
 	try {

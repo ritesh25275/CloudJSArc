@@ -1,5 +1,7 @@
+version: '3.8'
+
 services:
-  app:
+  frontend:
     build:
       context: .
       dockerfile: Dockerfile
@@ -8,6 +10,21 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=production
+      - BACKEND_URL=http://backend:5000
+    depends_on:
+      - backend
+      - mongodb
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: backend
+    ports:
+      - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
       - MONGODB_URI=mongodb://mongodb:27017/capstone
     depends_on:
       - mongodb
